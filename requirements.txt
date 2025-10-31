@@ -1,0 +1,16 @@
+whisper
+numpy
+scipy
+pandas
+polars
+scikit-learn
+matplotlib
+seaborn
+tqdm
+autogluon
+wandb
+peft
+transformers
+datasets
+torch
+torchaudio
