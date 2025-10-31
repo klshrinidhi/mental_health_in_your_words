@@ -3,9 +3,9 @@
 <h1>Mental Health in Your Words: Data-Efficient Anxiety and Depression Screening with Large Language Models</h1>
 
 <div>
-    Shrinidhi K. Lakshmikanth &emsp;
-    Changan Chen &emsp;
-    Amelia Sattler &emsp;
+    Shrinidhi K. Lakshmikanth* &emsp;
+    Changan Chen* &emsp;
+    Amelia Sattler* &emsp;
     Samira Daswani &emsp;
     Daniela Martinez-Bernal &emsp;
     Juze Zhang &emsp;
