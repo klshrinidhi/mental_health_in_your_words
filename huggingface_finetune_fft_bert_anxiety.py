@@ -20,8 +20,10 @@ argparser.add_argument('--i_beg',type=int,default=0)
 argparser.add_argument('--i_end',type=int,default=15)
 args = argparser.parse_args()
 
-run_name = 'bert_base_anx_e30'
-epochs = 30
+epochs = 10
+batch_size = 8
+learning_rate = 5e-5
+run_name = f'bert_base_anx_e{epochs}_bs{batch_size}_lr{learning_rate}'
 model_name = 'google-bert/bert-base-uncased'
 root_d = pathlib.Path('ROOT_D') / sys.argv[1]
 train_val_d = root_d / 'train_val'
@@ -70,6 +72,9 @@ def train_and_evaluate(train_f, val_f):
     model = model.cuda()
     training_args = TrainingArguments(output_dir=str(output_d),
                                       eval_strategy='epoch',
+                                      per_device_train_batch_size=batch_size,
+                                      per_device_eval_batch_size=batch_size,
+                                      learning_rate=learning_rate,
                                       num_train_epochs=epochs,
                                       logging_steps=1,
                                       save_strategy='epoch',

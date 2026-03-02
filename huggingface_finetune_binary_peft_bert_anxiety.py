@@ -28,10 +28,11 @@ args = argparser.parse_args()
 
 os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
 
-epochs = 50
+epochs = 10
+batch_size = 8
 learning_rate = 1e-3
 lora_rank = args.lora_rank
-run_name = f'bert_base_bin_peft_anx_e{epochs}_lr{learning_rate}_r{lora_rank}'
+run_name = f'bert_base_bin_peft_anx_e{epochs}_bs{batch_size}_lr{learning_rate}_r{lora_rank}'
 model_name = 'google-bert/bert-base-uncased'
 root_d = pathlib.Path('ROOT_D') / sys.argv[1]
 train_val_d = root_d / 'train_val'
@@ -84,6 +85,8 @@ def train_and_evaluate(train_f, val_f):
     model = model.cuda()
     training_args = TrainingArguments(output_dir=str(output_d),
                                       eval_strategy='epoch',
+                                      per_device_train_batch_size=batch_size,
+                                      per_device_eval_batch_size=batch_size,
                                       learning_rate=learning_rate,
                                       num_train_epochs=epochs,
                                       logging_steps=1,
