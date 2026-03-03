@@ -46,8 +46,12 @@ All the code in this repo requires data to be placed in a directory called `<ROO
 
 `parse_responses_*.py`: Used to parse the responses obtained from the APIs.
 
-`huggingface_*.py`: Used to train and evaluate baselines.
+`hf_ft_*.py`: Used to finetune and evaluate HuggingFace models BERT, Whisper and VideoMAE.
 
-`train_ml_algos.py`: Train Autogluon on the results of different LLMs.
+`agg_algos.py`: Train aggregation algorithms with Autogluon.
 
-`vis_new.ipynb`: Jupyter notebook that fixes the parameters and compiles the final results.
+`trad_ml_algos_*`: Train traditional ML algorithms with Scikit-Learn.
+
+`word_cloud.py`: Generate word-clouds.
+
+`compile_results.py`: Compile all the intermediate results into final ones.
