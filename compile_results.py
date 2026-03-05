@@ -385,7 +385,6 @@ def save_binary_confusion_matrix(df_results, anx_out_f, dep_out_f):
     plt.xlabel('Predicted',fontsize=28)
     plt.ylabel('Actual',fontsize=28)
     plt.tight_layout()
-    plt.show()
     plt.savefig(anx_out_f,format='pdf',bbox_inches='tight')
 
     plt.figure(figsize=(500*plt_px,400*plt_px))
@@ -397,7 +396,6 @@ def save_binary_confusion_matrix(df_results, anx_out_f, dep_out_f):
     plt.xlabel('Predicted',fontsize=28)
     plt.ylabel('Actual',fontsize=28)
     plt.tight_layout()
-    plt.show()
     plt.savefig(dep_out_f,format='pdf',bbox_inches='tight')
 
 
@@ -447,7 +445,6 @@ def save_multiclass_confusion_matrix(df_results, anx_out_f, dep_out_f):
     plt.xlabel('Predicted',fontsize=28)
     plt.ylabel('Actual',fontsize=28)
     plt.tight_layout()
-    plt.show()
     plt.savefig(anx_out_f,format='pdf',bbox_inches='tight')
 
     plt.figure(figsize=(1000*plt_px,800*plt_px))
@@ -459,7 +456,6 @@ def save_multiclass_confusion_matrix(df_results, anx_out_f, dep_out_f):
     plt.xlabel('Predicted',fontsize=28)
     plt.ylabel('Actual',fontsize=28)
     plt.tight_layout()
-    plt.show()
     plt.savefig(dep_out_f,format='pdf',bbox_inches='tight')
 
     
@@ -641,7 +637,8 @@ df_results = pl.read_csv(results_f).select('val_participant_id','train_participa
                                            anxiety_pd=anxiety_pd_col,
                                            depression_pd=depression_pd_col)
 print_metrics(df_results)
-
+save_binary_confusion_matrix(df_results,mental_health_d/'gpt4o_binary_anx_cm.pdf',mental_health_d/'gpt4o_binary_dep_cm.pdf')
+save_multiclass_confusion_matrix(df_results,mental_health_d/'gpt4o_multiclass_anx_cm.pdf',mental_health_d/'gpt4o_multiclass_dep_cm.pdf')
 
 print('[bold green]#####################################################################[/bold green]')
 print('[bold green]GPT-4o 2 shot[/bold green]')
@@ -658,7 +655,6 @@ df_results = pl.read_csv(results_f).select('val_participant_id','train_participa
                                            depression_pd=depression_pd_col)
 print_metrics(df_results)
 
-
 print('[bold green]#####################################################################[/bold green]')
 print('[bold green]GPT-4o 3 shot[/bold green]')
 print('[bold green]3 shot per class where the examples are randomly chosen[/bold green]')
@@ -672,7 +668,6 @@ df_results = pl.read_csv(results_f).select('val_participant_id','train_participa
                                            anxiety_pd=anxiety_pd_col,
                                            depression_pd=depression_pd_col)
 print_metrics(df_results)
-
 
 print('[bold green]#####################################################################[/bold green]')
 print('[bold green]GPT-4o 4 shot[/bold green]')
@@ -688,7 +683,6 @@ df_results = pl.read_csv(results_f).select('val_participant_id','train_participa
                                            anxiety_pd=anxiety_pd_col,
                                            depression_pd=depression_pd_col)
 print_metrics(df_results)
-
 
 print('[bold green]#####################################################################[/bold green]')
 print('[bold green]GPT-4o 5 shot[/bold green]')
@@ -721,6 +715,8 @@ df_results = pl.read_csv(results_f).select('val_participant_id','train_participa
                                            anxiety_pd=anxiety_pd_col,
                                            depression_pd=depression_pd_col)
 print_metrics(df_results)
+save_binary_confusion_matrix(df_results,mental_health_d/'gemini_binary_anx_cm.pdf',mental_health_d/'gemini_binary_dep_cm.pdf')
+save_multiclass_confusion_matrix(df_results,mental_health_d/'gemini_multiclass_anx_cm.pdf',mental_health_d/'gemini_multiclass_dep_cm.pdf')
 
 print('[bold green]#####################################################################[/bold green]')
 print('[bold green]Gemini-1.5pro 2 shot[/bold green]')
@@ -798,6 +794,8 @@ df_results = pl.read_csv(results_f).select('val_participant_id','train_participa
                                            anxiety_pd=anxiety_pd_col,
                                            depression_pd=depression_pd_col)
 print_metrics(df_results)
+save_binary_confusion_matrix(df_results,mental_health_d/'medlm_binary_anx_cm.pdf',mental_health_d/'medlm_binary_dep_cm.pdf')
+save_multiclass_confusion_matrix(df_results,mental_health_d/'medlm_multiclass_anx_cm.pdf',mental_health_d/'medlm_multiclass_dep_cm.pdf')
 
 print('[bold green]#####################################################################[/bold green]')
 print('[bold green]MedLM-Large-1.5 2 shot[/bold green]')
@@ -875,6 +873,8 @@ df_results = pl.read_csv(results_f).select('val_participant_id','train_participa
                                              anxiety_pd=anxiety_pd_col,
                                              depression_pd=depression_pd_col)
 print_metrics(df_results)
+save_binary_confusion_matrix(df_results,mental_health_d/'llama_binary_anx_cm.pdf',mental_health_d/'llama_binary_dep_cm.pdf')
+save_multiclass_confusion_matrix(df_results,mental_health_d/'llama_multiclass_anx_cm.pdf',mental_health_d/'llama_multiclass_dep_cm.pdf')
 
 print('[bold green]#####################################################################[/bold green]')
 print('[bold green]Llama-3.2-90b 2 shot[/bold green]')
