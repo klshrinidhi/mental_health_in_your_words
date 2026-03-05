@@ -216,18 +216,18 @@ def compute_multiclass_mean_metrics(df_results, roc_auc=True):
                       .group_by('samples')
                       .agg((pl.exclude('run','diff_anx_balacc','diff_dep_balacc').mean()*100).round(1),
                            pl.col('diff_anx_balacc','diff_dep_balacc'))
-                      .with_columns(wilcoxon_anx=pl.col('diff_anx_balacc').map_elements(compute_wilcoxon_score,
-                                                                                        return_dtype=pl.List(pl.Float64)),
-                                    wilcoxon_dep=pl.col('diff_dep_balacc').map_elements(compute_wilcoxon_score,
-                                                                                        return_dtype=pl.List(pl.Float64)))
+                    #   .with_columns(wilcoxon_anx=pl.col('diff_anx_balacc').map_elements(compute_wilcoxon_score,
+                    #                                                                     return_dtype=pl.List(pl.Float64)),
+                    #                 wilcoxon_dep=pl.col('diff_dep_balacc').map_elements(compute_wilcoxon_score,
+                    #                                                                     return_dtype=pl.List(pl.Float64)))
                       .drop('diff_anx_balacc','diff_dep_balacc')
-                      .with_columns(wilcoxon_anx_stat=pl.col('wilcoxon_anx').list.get(0),
-                                    wilcoxon_anx_pval=pl.col('wilcoxon_anx').list.get(1),
-                                    wilcoxon_dep_stat=pl.col('wilcoxon_dep').list.get(0),
-                                    wilcoxon_dep_pval=pl.col('wilcoxon_dep').list.get(1))
-                      .with_columns(wilcoxon_anx_pval_str=pl.col('wilcoxon_anx_pval').map_elements(lambda x: f"{x:.1e}",return_dtype=pl.Utf8),
-                                    wilcoxon_dep_pval_str=pl.col('wilcoxon_dep_pval').map_elements(lambda x: f"{x:.1e}",return_dtype=pl.Utf8))
-                      .drop('wilcoxon_anx','wilcoxon_dep')
+                    #   .with_columns(wilcoxon_anx_stat=pl.col('wilcoxon_anx').list.get(0),
+                    #                 wilcoxon_anx_pval=pl.col('wilcoxon_anx').list.get(1),
+                    #                 wilcoxon_dep_stat=pl.col('wilcoxon_dep').list.get(0),
+                    #                 wilcoxon_dep_pval=pl.col('wilcoxon_dep').list.get(1))
+                    #   .with_columns(wilcoxon_anx_pval_str=pl.col('wilcoxon_anx_pval').map_elements(lambda x: f"{x:.1e}",return_dtype=pl.Utf8),
+                    #                 wilcoxon_dep_pval_str=pl.col('wilcoxon_dep_pval').map_elements(lambda x: f"{x:.1e}",return_dtype=pl.Utf8))
+                    #   .drop('wilcoxon_anx','wilcoxon_dep')
                       .sort('samples'))
     df_scores_std = (df_scores
                      .drop('diff_anx_balacc','diff_dep_balacc')
