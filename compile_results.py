@@ -8,7 +8,14 @@ from scipy.stats import wilcoxon
 import polars as pl
 import sklearn.metrics as skm
 import matplotlib.pyplot as plt
+import seaborn as sns
 
+
+sns.set_theme(style='white',
+              font_scale=2,
+              rc={'xtick.bottom':True,
+                  'ytick.left':True})
+plt_px = 1/plt.rcParams['figure.dpi']
 
 mental_health_d = pathlib.Path('ROOT_D')
 N_SAMPLES = 5
@@ -332,6 +339,130 @@ def compute_multiclass_majority_metrics(df_results):
     return df_scores_mean,df_scores_std
 
 
+def save_binary_confusion_matrix(df_results, anx_out_f, dep_out_f):
+    label_to_id = {'minimal':0,
+                   'mild':1,
+                   'moderate':1,
+                   'moderately-severe':1,
+                   'severe':1}
+    df_results_binary = df_results.with_columns(
+        pl.col('anxiety').replace_strict(label_to_id),
+        pl.col('depression').replace_strict(label_to_id),
+        pl.col('anxiety_pd').replace_strict(label_to_id),
+        pl.col('depression_pd').replace_strict(label_to_id)
+    )
+    train_participant_ids = df_results_binary['train_participant_ids'].unique().sort()
+    max_anx_balacc,max_dep_balacc = 0,0
+    max_anx_cm,max_dep_cm = None,None
+    for n_samples in range(N_SAMPLES,N_SAMPLES+1):
+        for i_run in range(N_RUNS):
+            sample_train_participant_ids = train_participant_ids.sample(n_samples,seed=100*n_samples+i_run)
+            sample_train_participant_ids = set(sample_train_participant_ids.implode()[0])
+            df_val = df_results_binary.filter(pl.col('train_participant_ids').is_in(sample_train_participant_ids))
+            df_mean = df_val.group_by('val_participant_id').agg(
+                pl.col('anxiety').first(),
+                pl.col('depression').first(),
+                pl.col('anxiety_pd').mean().round().cast(pl.Int64),
+                pl.col('depression_pd').mean().round().cast(pl.Int64)
+            )
+            anx_gt_pd = (df_mean['anxiety'],df_mean['anxiety_pd'])
+            dep_gt_pd = (df_mean['depression'],df_mean['depression_pd'])
+            anx_balacc = skm.balanced_accuracy_score(*anx_gt_pd)
+            dep_balacc = skm.balanced_accuracy_score(*dep_gt_pd)
+            if anx_balacc > max_anx_balacc:
+                max_anx_balacc = max(max_anx_balacc,anx_balacc)
+                max_anx_cm = skm.confusion_matrix(*anx_gt_pd,labels=[0,1],normalize='true')
+            if dep_balacc > max_dep_balacc:
+                max_dep_balacc = max(max_dep_balacc,dep_balacc)
+                max_dep_cm = skm.confusion_matrix(*dep_gt_pd,labels=[0,1],normalize='true')
+    
+    plt.figure(figsize=(500*plt_px,400*plt_px))
+    sns.heatmap(max_anx_cm,annot=True,cmap='Blues',
+                xticklabels=['Negative','Positive'],yticklabels=['Negative','Positive'],
+                vmin=0,vmax=1)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.xlabel('Predicted',fontsize=28)
+    plt.ylabel('Actual',fontsize=28)
+    plt.tight_layout()
+    plt.show()
+    plt.savefig(anx_out_f,format='pdf',bbox_inches='tight')
+
+    plt.figure(figsize=(500*plt_px,400*plt_px))
+    sns.heatmap(max_dep_cm,annot=True,cmap='Blues',
+                xticklabels=['Negative','Positive'],yticklabels=['Negative','Positive'],
+                vmin=0,vmax=1)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.xlabel('Predicted',fontsize=28)
+    plt.ylabel('Actual',fontsize=28)
+    plt.tight_layout()
+    plt.show()
+    plt.savefig(dep_out_f,format='pdf',bbox_inches='tight')
+
+
+def save_multiclass_confusion_matrix(df_results, anx_out_f, dep_out_f):
+    label_to_id = {'minimal':0,
+                   'mild':1,
+                   'moderate':2,
+                   'moderately-severe':3,
+                   'severe':3}
+    df_results_binary = df_results.with_columns(
+        pl.col('anxiety').replace_strict(label_to_id),
+        pl.col('depression').replace_strict(label_to_id),
+        pl.col('anxiety_pd').replace_strict(label_to_id),
+        pl.col('depression_pd').replace_strict(label_to_id)
+    )
+    train_participant_ids = df_results_binary['train_participant_ids'].unique().sort()
+    max_anx_balacc,max_dep_balacc = 0,0
+    max_anx_cm,max_dep_cm = None,None
+    for n_samples in range(N_SAMPLES,N_SAMPLES+1):
+        for i_run in range(N_RUNS):
+            sample_train_participant_ids = train_participant_ids.sample(n_samples,seed=100*n_samples+i_run)
+            sample_train_participant_ids = set(sample_train_participant_ids.implode()[0])
+            df_val = df_results_binary.filter(pl.col('train_participant_ids').is_in(sample_train_participant_ids))
+            df_mean = df_val.group_by('val_participant_id').agg(
+                pl.col('anxiety').first(),
+                pl.col('depression').first(),
+                pl.col('anxiety_pd').mean().round().cast(pl.Int64),
+                pl.col('depression_pd').mean().round().cast(pl.Int64)
+            )
+            anx_gt_pd = (df_mean['anxiety'],df_mean['anxiety_pd'])
+            dep_gt_pd = (df_mean['depression'],df_mean['depression_pd'])
+            anx_balacc = skm.balanced_accuracy_score(*anx_gt_pd)
+            dep_balacc = skm.balanced_accuracy_score(*dep_gt_pd)
+            if anx_balacc > max_anx_balacc:
+                max_anx_balacc = max(max_anx_balacc,anx_balacc)
+                max_anx_cm = skm.confusion_matrix(*anx_gt_pd,labels=[0,1,2,3],normalize='true')
+            if dep_balacc > max_dep_balacc:
+                max_dep_balacc = max(max_dep_balacc,dep_balacc)
+                max_dep_cm = skm.confusion_matrix(*dep_gt_pd,labels=[0,1,2,3],normalize='true')
+
+    plt.figure(figsize=(1000*plt_px,800*plt_px))
+    sns.heatmap(max_anx_cm,annot=True,cmap='Blues',
+                xticklabels=['Minimal','Mild','Moderate','Severe'],yticklabels=['Minimal','Mild','Moderate','Severe'],
+                vmin=0,vmax=1)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.xlabel('Predicted',fontsize=28)
+    plt.ylabel('Actual',fontsize=28)
+    plt.tight_layout()
+    plt.show()
+    plt.savefig(anx_out_f,format='pdf',bbox_inches='tight')
+
+    plt.figure(figsize=(1000*plt_px,800*plt_px))
+    sns.heatmap(max_dep_cm,annot=True,cmap='Blues',
+                xticklabels=['Minimal','Mild','Moderate','Severe'],yticklabels=['Minimal','Mild','Moderate','Severe'],
+                vmin=0,vmax=1)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.xlabel('Predicted',fontsize=28)
+    plt.ylabel('Actual',fontsize=28)
+    plt.tight_layout()
+    plt.show()
+    plt.savefig(dep_out_f,format='pdf',bbox_inches='tight')
+
+    
 def print_metrics(df_results):
     print('[bold blue]#####################################################################[/bold blue]')
     print('[bold blue]Binary Mean[/bold blue]')
