@@ -55,3 +55,12 @@ All the code in this repo requires data to be placed in a directory called `<ROO
 `word_cloud.py`: Generate word-clouds.
 
 `compile_results.py`: Compile all the intermediate results into final ones.
+
+## Supplemental Analysis Code
+
+Added 9 November 2026. The existing root-level files implement the main study
+pipeline. The files in `supplementary_analyses/` support additional analyses
+reported in the paper and do not replace or modify that pipeline. They operate
+on preserved model-output artifacts and make no new LLM or API calls. See
+`supplementary_analyses/README.md` for the script inventory, expected inputs,
+and software-version notes.
